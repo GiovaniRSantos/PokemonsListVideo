@@ -1,5 +1,7 @@
 package com.example.recyclerview
 
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,9 +22,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initRecyclerView() {
-        this.liveAdapter = VideoAdapter()
+        this.liveAdapter = VideoAdapter { video ->
+            openVideo(video.link)
+        }
 
-        recyclerview.layoutManager = LinearLayoutManager(this@MainActivity)
-        recyclerview.adapter = this.liveAdapter
+        recyclerview.apply {
+            recyclerview.adapter = liveAdapter
+        }
+    }
+
+    private fun openVideo(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
     }
 }

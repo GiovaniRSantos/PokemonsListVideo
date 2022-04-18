@@ -11,7 +11,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.recyclerview.models.Video
 
-class VideoAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class VideoAdapter(private val onItemClicked: (Video) -> Unit) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var items: List<Video> = ArrayList()
 
@@ -25,7 +26,7 @@ class VideoAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         when (holder) {
             is LiveViewHolder -> {
-                holder.bind(items[position])
+                holder.bind(items[position], onItemClicked)
             }
         }
 
@@ -46,17 +47,21 @@ class VideoAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val liveThumbnail = itemView.findViewById<ImageView>(R.id.thumbnail)
 
         @SuppressLint("CheckResult")
-        fun bind(live: Video) {
-            liveTitle.text = live.title
-            liveAuthor.text = live.author
+        fun bind(video: Video, onItemClicked: (Video) -> Unit) {
+            liveTitle.text = video.title
+            liveAuthor.text = video.author
 
             val requestOptions = RequestOptions()
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_background)
             Glide.with(itemView.context)
                 .applyDefaultRequestOptions(requestOptions)
-                .load(live.thumbnailUrl)
+                .load(video.thumbnailUrl)
                 .into(liveThumbnail)
+
+            itemView.setOnClickListener {
+                onItemClicked(video)
+            }
         }
     }
 
